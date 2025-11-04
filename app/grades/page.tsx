@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Card, CardBody, Input, Select, SelectItem, Button } from '@nextui-org/react'
 
@@ -20,7 +20,7 @@ async function fetchPoliticians(): Promise<Politician[]> {
   return response.json()
 }
 
-export default function GradesPage() {
+function GradesContent() {
   const searchParams = useSearchParams()
   const [politicians, setPoliticians] = useState<Politician[]>([])
   const [loading, setLoading] = useState(true)
@@ -327,5 +327,19 @@ export default function GradesPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function GradesPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center">
+          <div className="text-2xl">Loading politicians...</div>
+        </div>
+      </div>
+    }>
+      <GradesContent />
+    </Suspense>
   )
 }
