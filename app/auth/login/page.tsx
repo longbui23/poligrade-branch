@@ -1,10 +1,10 @@
 'use client'
 
 import { Button, Input, Card, CardBody } from '@nextui-org/react'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function LoginPage() {
+function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -88,5 +88,19 @@ export default function LoginPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p>Loading...</p>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }
