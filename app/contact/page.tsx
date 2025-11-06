@@ -11,17 +11,49 @@ export default function ContactPage() {
     subject: '',
     message: '',
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitStatus('idle')
 
-    // Construct mailto link with form data
-    const mailtoLink = `mailto:contact@poligrade.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
-      `From: ${formData.firstName} ${formData.lastName}\nEmail: ${formData.email}\n\n${formData.message}`
-    )}`
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY,
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }),
+      })
 
-    // Open user's email client
-    window.location.href = mailtoLink
+      const data = await response.json()
+
+      if (data.success) {
+        setSubmitStatus('success')
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          subject: '',
+          message: '',
+        })
+      } else {
+        setSubmitStatus('error')
+      }
+    } catch (error) {
+      console.error('Form submission error:', error)
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -105,9 +137,27 @@ export default function ContactPage() {
                     color="primary"
                     size="lg"
                     className="w-full font-semibold"
+                    isLoading={isSubmitting}
+                    isDisabled={isSubmitting}
                   >
-                    Send Message
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </Button>
+
+                  {/* Success Message */}
+                  {submitStatus === 'success' && (
+                    <div className="p-4 rounded-lg bg-success-50 text-success-700 dark:bg-success-900/20 dark:text-success-400">
+                      <p className="font-semibold">Message sent successfully!</p>
+                      <p className="text-sm mt-1">We&apos;ll get back to you as soon as possible.</p>
+                    </div>
+                  )}
+
+                  {/* Error Message */}
+                  {submitStatus === 'error' && (
+                    <div className="p-4 rounded-lg bg-danger-50 text-danger-700 dark:bg-danger-900/20 dark:text-danger-400">
+                      <p className="font-semibold">Something went wrong.</p>
+                      <p className="text-sm mt-1">Please try again or email us directly at contact@poligrade.com</p>
+                    </div>
+                  )}
                 </form>
               </CardBody>
             </Card>
