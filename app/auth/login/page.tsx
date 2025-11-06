@@ -28,8 +28,8 @@ function LoginForm() {
       if (response.ok) {
         // Get redirect path or default to home
         const redirectPath = searchParams.get('redirect') || '/'
-        router.push(redirectPath)
-        router.refresh()
+        // Use window.location for full page reload to ensure cookie is recognized
+        window.location.href = redirectPath
       } else {
         setError(true)
         setPassword('')
