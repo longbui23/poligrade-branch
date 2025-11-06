@@ -79,7 +79,8 @@ export default function DonatePage() {
             <form
               action="https://www.paypal.com/donate"
               method="post"
-              target="_top"
+              target="_blank"
+              rel="noopener noreferrer"
               className="max-w-md mx-auto"
             >
               <input type="hidden" name="hosted_button_id" value="2SJS4BJQD5H68" />
