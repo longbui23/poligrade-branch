@@ -36,7 +36,7 @@ export default function FAQPage() {
             A clear example of the damage caused by misinformation and blatant falsehoods can be seen in how Americans perceive basic demographic facts. A recent YouGov poll found that Americans believe 40% of the population is Black (actual: ~12%), 20% is transgender (actual: ~1%), one-third are first-generation immigrants (actual: ~10%), and that one in five households earn over $500,000 per year (actual: ~1%).
           </p>
           <p>
-            These wildly inaccurate perceptions are not accidental—they are the direct result of constant coverage of topics that are either completely fabricated or severely misrepresented. When voters are repeatedly exposed to distorted narratives, it becomes nearly impossible to have honest, policy-driven discussions. That's why PoliGrade was created: to replace noise and misinformation with facts, context, and clarity.
+            These wildly inaccurate perceptions are not accidental—they are the direct result of constant coverage of topics that are either completely fabricated or severely misrepresented. When voters are repeatedly exposed to distorted narratives, it becomes nearly impossible to have honest, policy-driven discussions. That&apos;s why PoliGrade was created: to replace noise and misinformation with facts, context, and clarity.
           </p>
         </>
       ),
