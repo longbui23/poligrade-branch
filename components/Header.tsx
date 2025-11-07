@@ -9,6 +9,7 @@ const navLinks = [
   { href: '/grades', label: 'Politicians' },
   { href: '/quiz', label: 'Alignment Quiz' },
   { href: '/contact', label: 'Contact' },
+  { href: '/faq', label: 'FAQ' },
   { href: '/donate', label: 'Donate' },
 ]
 
