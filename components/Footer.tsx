@@ -6,20 +6,8 @@ export default function Footer() {
   return (
     <footer className="w-full border-t border-divider bg-background" role="contentinfo">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Desktop: Links */}
-        <div className="hidden md:flex justify-center gap-6 mb-4">
-          <Link href="/grades" className="text-sm text-foreground/60 hover:text-primary transition-colors">
-            Politicians
-          </Link>
-          <Link href="/quiz" className="text-sm text-foreground/60 hover:text-primary transition-colors">
-            Alignment Quiz
-          </Link>
-          <Link href="/contact" className="text-sm text-foreground/60 hover:text-primary transition-colors">
-            Contact
-          </Link>
-          <Link href="/donate" className="text-sm text-foreground/60 hover:text-primary transition-colors">
-            Donate
-          </Link>
+        {/* Links */}
+        <div className="flex justify-center gap-6 mb-4">
           <Link href="/privacy" className="text-sm text-foreground/60 hover:text-primary transition-colors">
             Privacy
           </Link>
