@@ -108,19 +108,21 @@ export default function QuizClient({ questions }: QuizClientProps) {
               </p>
             </div>
 
-            <Card className="mb-8">
-              <CardBody className="p-10">
-                <div className="mb-6">
-                  <div className="text-sm text-foreground/60 mb-2">Your Party Alignment</div>
-                  <div className="text-5xl font-bold text-primary mb-4">{resultLabel}</div>
-                  <p className="text-lg text-foreground/80">{description}</p>
-                </div>
-                <div className="pt-6 border-t border-divider">
-                  <div className="text-sm text-foreground/60 mb-2">Your Score</div>
-                  <div className="text-2xl font-bold">{totalScore}</div>
-                </div>
-              </CardBody>
-            </Card>
+            <div role="status" aria-live="polite" aria-atomic="true">
+              <Card className="mb-8">
+                <CardBody className="p-10">
+                  <div className="mb-6">
+                    <div className="text-sm text-foreground/60 mb-2">Your Party Alignment</div>
+                    <div className="text-5xl font-bold text-primary mb-4">{resultLabel}</div>
+                    <p className="text-lg text-foreground/80">{description}</p>
+                  </div>
+                  <div className="pt-6 border-t border-divider">
+                    <div className="text-sm text-foreground/60 mb-2">Your Score</div>
+                    <div className="text-2xl font-bold">{totalScore}</div>
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
 
             <div className="flex flex-wrap gap-4 justify-center">
               <Button
@@ -131,6 +133,7 @@ export default function QuizClient({ questions }: QuizClientProps) {
                   setTotalScore(0)
                   setQuizStarted(false)
                 }}
+                aria-label="Retake the alignment quiz"
               >
                 Retake Quiz
               </Button>
@@ -139,6 +142,7 @@ export default function QuizClient({ questions }: QuizClientProps) {
                 href={`/grades?grade=${encodeURIComponent(resultLabel)}`}
                 size="lg"
                 variant="bordered"
+                aria-label={`View all ${resultLabel} politicians`}
               >
                 View {resultLabel} Politicians
               </Button>
@@ -163,7 +167,12 @@ export default function QuizClient({ questions }: QuizClientProps) {
             </span>
             <span className="text-sm font-semibold">{progressPercent}%</span>
           </div>
-          <Progress value={progressPercent} color="primary" className="h-2" />
+          <Progress
+            value={progressPercent}
+            color="primary"
+            className="h-2"
+            aria-label={`Quiz progress: ${progressPercent}% complete, question ${currentQuestion + 1} of ${questions.length}`}
+          />
         </div>
 
         {/* Issue Area Badge */}
@@ -182,12 +191,13 @@ export default function QuizClient({ questions }: QuizClientProps) {
               {current.question}
             </h2>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center" role="group" aria-label={`Answer question: ${current.question}`}>
               <Button
                 size="lg"
                 color="success"
                 className="font-semibold text-lg min-w-[140px]"
                 onPress={() => handleOptionClick('Yes')}
+                aria-label={`Answer yes to: ${current.question}`}
               >
                 Yes
               </Button>
@@ -196,6 +206,7 @@ export default function QuizClient({ questions }: QuizClientProps) {
                 variant="flat"
                 className="font-semibold text-lg min-w-[140px]"
                 onPress={() => handleOptionClick('No')}
+                aria-label={`Answer no to: ${current.question}`}
               >
                 No
               </Button>

@@ -44,7 +44,7 @@ export default function Home() {
         {/* Background gradient */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute left-1/2 top-0 -translate-x-1/2 transform">
-            <div className="h-[800px] w-[800px] rounded-full bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 blur-3xl" />
+            <div className="h-[800px] w-[800px] rounded-full bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 dark:from-blue-600/10 dark:via-purple-600/10 dark:to-pink-600/10 blur-3xl" />
           </div>
         </div>
 
@@ -168,7 +168,7 @@ export default function Home() {
       {/* Bottom CTA Section */}
       <section className="border-t border-divider py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-divider bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 p-12 text-center">
+          <div className="rounded-2xl border border-divider bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 dark:from-blue-600/5 dark:via-purple-600/5 dark:to-pink-600/5 p-12 text-center">
             <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
               Ready to make informed decisions?
             </h2>

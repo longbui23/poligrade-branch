@@ -71,7 +71,7 @@ export default function ContactPage() {
         <div>
             <Card>
               <CardBody className="p-6 md:p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6" aria-label="Contact form">
                   <div className="grid gap-6 md:grid-cols-2">
                     <Input
                       type="text"
@@ -139,13 +139,15 @@ export default function ContactPage() {
                     className="w-full font-semibold"
                     isLoading={isSubmitting}
                     isDisabled={isSubmitting}
+                    aria-busy={isSubmitting}
+                    aria-label={isSubmitting ? 'Sending message...' : 'Send message'}
                   >
                     {isSubmitting ? 'Sending...' : 'Send Message'}
                   </Button>
 
                   {/* Success Message */}
                   {submitStatus === 'success' && (
-                    <div className="p-4 rounded-lg bg-success-50 text-success-700 dark:bg-success-900/20 dark:text-success-400">
+                    <div role="alert" className="p-4 rounded-lg bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-400 border border-success-200 dark:border-success-500/30">
                       <p className="font-semibold">Message sent successfully!</p>
                       <p className="text-sm mt-1">We&apos;ll get back to you as soon as possible.</p>
                     </div>
@@ -153,7 +155,7 @@ export default function ContactPage() {
 
                   {/* Error Message */}
                   {submitStatus === 'error' && (
-                    <div className="p-4 rounded-lg bg-danger-50 text-danger-700 dark:bg-danger-900/20 dark:text-danger-400">
+                    <div role="alert" className="p-4 rounded-lg bg-danger-50 text-danger-700 dark:bg-danger-500/10 dark:text-danger-400 border border-danger-200 dark:border-danger-500/30">
                       <p className="font-semibold">Something went wrong.</p>
                       <p className="text-sm mt-1">Please try again or email us directly at contact@poligrade.com</p>
                     </div>

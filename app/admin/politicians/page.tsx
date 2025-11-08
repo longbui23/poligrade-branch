@@ -193,6 +193,7 @@ export default function AdminPoliticiansPage() {
               placeholder="Search by name"
               value={nameFilter}
               onChange={(e) => setNameFilter(e.target.value)}
+              aria-label="Filter politicians by name"
               classNames={{ input: 'text-base', inputWrapper: 'h-12' }}
               startContent={
                 <span className="text-xs text-foreground/60 font-medium">Name</span>
@@ -203,6 +204,7 @@ export default function AdminPoliticiansPage() {
               placeholder="Select state"
               selectedKeys={stateFilter ? [stateFilter] : []}
               onChange={(e) => setStateFilter(e.target.value)}
+              aria-label="Filter by state"
               classNames={{ trigger: 'h-12' }}
               startContent={
                 <span className="text-xs text-foreground/60 font-medium mr-2">State</span>
@@ -217,12 +219,13 @@ export default function AdminPoliticiansPage() {
           </div>
 
           {/* Filter Dropdowns Row */}
-          <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex flex-wrap gap-4 items-center" role="search" aria-label="Filter politicians">
             <div className="flex-1 min-w-[180px]">
               <Select
                 placeholder="All offices"
                 selectedKeys={officeFilter ? [officeFilter] : []}
                 onChange={(e) => setOfficeFilter(e.target.value)}
+                aria-label="Filter by office type"
                 classNames={{ trigger: 'h-12' }}
                 startContent={
                   <span className="text-xs text-foreground/60 font-medium mr-2">Office</span>
@@ -241,6 +244,7 @@ export default function AdminPoliticiansPage() {
                 placeholder="All statuses"
                 selectedKeys={statusFilter ? [statusFilter] : []}
                 onChange={(e) => setStatusFilter(e.target.value)}
+                aria-label="Filter by politician status"
                 classNames={{ trigger: 'h-12' }}
                 startContent={
                   <span className="text-xs text-foreground/60 font-medium mr-2">Status</span>
@@ -259,6 +263,7 @@ export default function AdminPoliticiansPage() {
                 placeholder="All grades"
                 selectedKeys={gradeFilter ? [gradeFilter] : []}
                 onChange={(e) => setGradeFilter(e.target.value)}
+                aria-label="Filter by political grade"
                 classNames={{ trigger: 'h-12' }}
                 startContent={
                   <span className="text-xs text-foreground/60 font-medium mr-2">Grade</span>
@@ -277,6 +282,7 @@ export default function AdminPoliticiansPage() {
               variant="light"
               onPress={handleReset}
               className="h-12"
+              aria-label="Clear all filters"
             >
               Reset
             </Button>
@@ -302,8 +308,17 @@ export default function AdminPoliticiansPage() {
               <tbody>
                 {politicians.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center p-8 text-foreground/60">
-                      No politicians found. Click &quot;Add Politician&quot; to get started.
+                    <td colSpan={6} className="text-center p-8">
+                      <div className="flex flex-col items-center gap-3">
+                        <p className="text-foreground/80 font-medium">No politicians found</p>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          onPress={handleReset}
+                        >
+                          Clear Filters
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -334,12 +349,13 @@ export default function AdminPoliticiansPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-6">
+        <nav aria-label="Pagination navigation" className="flex justify-center items-center gap-2 mt-6">
           <Button
             size="sm"
             variant="flat"
             isDisabled={currentPage === 1}
             onPress={() => setCurrentPage(currentPage - 1)}
+            aria-label="Go to previous page"
           >
             Previous
           </Button>
@@ -361,7 +377,7 @@ export default function AdminPoliticiansPage() {
               }
 
               if (showEllipsisBefore || showEllipsisAfter) {
-                return <span key={page} className="px-2">...</span>
+                return <span key={page} className="px-2" aria-hidden="true">...</span>
               }
 
               return (
@@ -371,6 +387,8 @@ export default function AdminPoliticiansPage() {
                   variant={currentPage === page ? 'solid' : 'flat'}
                   color={currentPage === page ? 'primary' : 'default'}
                   onPress={() => setCurrentPage(page)}
+                  aria-label={`Go to page ${page}`}
+                  aria-current={currentPage === page ? 'page' : undefined}
                 >
                   {page}
                 </Button>
@@ -383,10 +401,11 @@ export default function AdminPoliticiansPage() {
             variant="flat"
             isDisabled={currentPage === totalPages}
             onPress={() => setCurrentPage(currentPage + 1)}
+            aria-label="Go to next page"
           >
             Next
           </Button>
-        </div>
+        </nav>
       )}
 
       {/* Add/Edit Modal */}

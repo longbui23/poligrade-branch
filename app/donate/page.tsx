@@ -82,11 +82,13 @@ export default function DonatePage() {
               target="_blank"
               rel="noopener noreferrer"
               className="max-w-md mx-auto"
+              aria-label="Donation form"
             >
               <input type="hidden" name="hosted_button_id" value="2SJS4BJQD5H68" />
               <button
                 type="submit"
                 className="w-full bg-gradient-to-r from-[#0070BA] to-[#009CDE] text-white font-semibold py-4 px-8 rounded-lg hover:opacity-90 transition-opacity text-lg"
+                aria-label="Donate to PoliGrade via PayPal - Opens PayPal website in new window"
               >
                 Donate via PayPal
               </button>

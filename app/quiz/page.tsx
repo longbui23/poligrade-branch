@@ -1,6 +1,12 @@
 import { promises as fs } from 'fs'
 import path from 'path'
+import type { Metadata } from 'next'
 import QuizClient from './QuizClient'
+
+export const metadata: Metadata = {
+  title: 'Voter Alignment Quiz - PoliGrade',
+  description: 'Take our 27-question quiz to discover which of our six policy-based parties aligns with your political beliefs. Get your results in minutes and see which politicians match your values.',
+}
 
 interface QuizQuestion {
   id: number

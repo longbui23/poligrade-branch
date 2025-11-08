@@ -1,6 +1,12 @@
 import { Suspense } from 'react'
 import { PrismaClient } from '@prisma/client'
+import type { Metadata } from 'next'
 import GradesClient from './GradesClient'
+
+export const metadata: Metadata = {
+  title: 'Politician Grades - PoliGrade',
+  description: 'Browse and search policy-based grades for over 500 elected officials including governors, senators, and representatives. Filter by state, office, and political alignment.',
+}
 
 interface Politician {
   id: string

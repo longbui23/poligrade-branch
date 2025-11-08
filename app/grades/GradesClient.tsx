@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Card, CardBody, Input, Select, SelectItem, Button } from '@nextui-org/react'
 
@@ -45,6 +45,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
 
   // Filter state
   const [nameQuery, setNameQuery] = useState('')
+  const [debouncedNameQuery, setDebouncedNameQuery] = useState('')
   const [stateFilter, setStateFilter] = useState('')
   const [officeFilter, setOfficeFilter] = useState('All')
   const [gradeFilter, setGradeFilter] = useState('')
@@ -52,6 +53,28 @@ export default function GradesClient({ politicians }: GradesClientProps) {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 50
+
+  // Debounce name search
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    // Set new timer
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedNameQuery(nameQuery)
+    }, 300)
+
+    // Cleanup
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [nameQuery])
 
   // Apply grade filter from URL on mount
   useEffect(() => {
@@ -64,14 +87,14 @@ export default function GradesClient({ politicians }: GradesClientProps) {
   // Filter politicians
   const filteredPoliticians = useMemo(() => {
     return politicians.filter(p => {
-      const matchesName = !nameQuery || p.name.toLowerCase().includes(nameQuery.toLowerCase())
+      const matchesName = !debouncedNameQuery || p.name.toLowerCase().includes(debouncedNameQuery.toLowerCase())
       const matchesState = !stateFilter || p.state === stateFilter
       const matchesOffice = officeFilter === 'All' || p.office === officeFilter
       const matchesGrade = !gradeFilter || p.grade === gradeFilter
 
       return matchesName && matchesState && matchesOffice && matchesGrade
     })
-  }, [politicians, nameQuery, stateFilter, officeFilter, gradeFilter])
+  }, [politicians, debouncedNameQuery, stateFilter, officeFilter, gradeFilter])
 
   // Summary counts by grade
   const summaryCounts = useMemo(() => {
@@ -90,6 +113,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
   // Reset filters
   const handleReset = useCallback(() => {
     setNameQuery('')
+    setDebouncedNameQuery('')
     setStateFilter('')
     setOfficeFilter('All')
     setGradeFilter('')
@@ -99,7 +123,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1)
-  }, [nameQuery, stateFilter, officeFilter, gradeFilter])
+  }, [debouncedNameQuery, stateFilter, officeFilter, gradeFilter])
 
   // Paginated results
   const totalPages = Math.ceil(filteredPoliticians.length / itemsPerPage)
@@ -137,12 +161,13 @@ export default function GradesClient({ politicians }: GradesClientProps) {
       <Card className="mb-8">
         <CardBody className="p-6">
           {/* Filters Row */}
-          <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex flex-wrap gap-4 items-center" role="search" aria-label="Filter politicians">
             <div className="flex-1 min-w-[200px]">
               <Input
                 placeholder="Search by name"
                 value={nameQuery}
                 onChange={(e) => setNameQuery(e.target.value)}
+                aria-label="Filter politicians by name"
                 classNames={{ input: 'text-base', inputWrapper: 'h-12' }}
                 startContent={
                   <span className="text-xs text-foreground/60 font-medium">Name</span>
@@ -155,6 +180,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                 placeholder="Select state"
                 selectedKeys={stateFilter ? [stateFilter] : []}
                 onChange={(e) => setStateFilter(e.target.value)}
+                aria-label="Filter by state"
                 classNames={{ trigger: 'h-12' }}
                 startContent={
                   <span className="text-xs text-foreground/60 font-medium mr-2">State</span>
@@ -173,6 +199,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                 placeholder="All offices"
                 selectedKeys={[officeFilter]}
                 onChange={(e) => setOfficeFilter(e.target.value)}
+                aria-label="Filter by office type"
                 classNames={{ trigger: 'h-12' }}
                 startContent={
                   <span className="text-xs text-foreground/60 font-medium mr-2">Office</span>
@@ -191,6 +218,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                 placeholder="All grades"
                 selectedKeys={gradeFilter ? [gradeFilter] : []}
                 onChange={(e) => setGradeFilter(e.target.value)}
+                aria-label="Filter by political grade"
                 classNames={{ trigger: 'h-12' }}
                 startContent={
                   <span className="text-xs text-foreground/60 font-medium mr-2">Grade</span>
@@ -209,6 +237,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
               variant="light"
               onPress={handleReset}
               className="h-12"
+              aria-label="Clear all filters"
             >
               Reset
             </Button>
@@ -241,8 +270,17 @@ export default function GradesClient({ politicians }: GradesClientProps) {
               <tbody>
                 {filteredPoliticians.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center p-8 text-foreground/60">
-                      No politicians found matching your filters
+                    <td colSpan={5} className="text-center p-8">
+                      <div className="flex flex-col items-center gap-3">
+                        <p className="text-foreground/80 font-medium">No politicians found matching your filters</p>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          onPress={handleReset}
+                        >
+                          Clear Filters
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -270,8 +308,17 @@ export default function GradesClient({ politicians }: GradesClientProps) {
           {/* Mobile Card Layout */}
           <div className="md:hidden">
             {filteredPoliticians.length === 0 ? (
-              <div className="text-center p-8 text-foreground/60">
-                No politicians found matching your filters
+              <div className="text-center p-8">
+                <div className="flex flex-col items-center gap-3">
+                  <p className="text-foreground/80 font-medium">No politicians found matching your filters</p>
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    onPress={handleReset}
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="divide-y divide-divider">
@@ -311,11 +358,12 @@ export default function GradesClient({ politicians }: GradesClientProps) {
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <nav aria-label="Pagination navigation" className="flex justify-center items-center gap-2 mt-8">
           <Button
             variant="flat"
             isDisabled={currentPage === 1}
             onPress={() => setCurrentPage(p => p - 1)}
+            aria-label="Go to previous page"
           >
             Previous
           </Button>
@@ -335,12 +383,14 @@ export default function GradesClient({ politicians }: GradesClientProps) {
 
                 return (
                   <div key={page} className="flex gap-2 items-center">
-                    {showEllipsis && <span className="text-foreground/60">...</span>}
+                    {showEllipsis && <span className="text-foreground/60" aria-hidden="true">...</span>}
                     <Button
                       variant={currentPage === page ? 'solid' : 'flat'}
                       color={currentPage === page ? 'primary' : 'default'}
                       onPress={() => setCurrentPage(page)}
                       className="min-w-[44px]"
+                      aria-label={`Go to page ${page}`}
+                      aria-current={currentPage === page ? 'page' : undefined}
                     >
                       {page}
                     </Button>
@@ -353,10 +403,11 @@ export default function GradesClient({ politicians }: GradesClientProps) {
             variant="flat"
             isDisabled={currentPage === totalPages}
             onPress={() => setCurrentPage(p => p + 1)}
+            aria-label="Go to next page"
           >
             Next
           </Button>
-        </div>
+        </nav>
       )}
     </div>
   )
