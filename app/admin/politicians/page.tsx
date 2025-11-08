@@ -31,6 +31,10 @@ export default function AdminPoliticiansPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [gradeFilter, setGradeFilter] = useState('')
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 50
+
   const fetchPoliticians = useCallback(async () => {
     try {
       const params = new URLSearchParams()
@@ -61,7 +65,19 @@ export default function AdminPoliticiansPage() {
     setOfficeFilter('')
     setStatusFilter('')
     setGradeFilter('')
+    setCurrentPage(1)
   }
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [nameFilter, stateFilter, officeFilter, statusFilter, gradeFilter])
+
+  // Pagination calculations
+  const totalPages = Math.ceil(politicians.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentPoliticians = politicians.slice(startIndex, endIndex)
 
   const handleRowClick = (politician: Politician) => {
     setSelectedPolitician(politician)
@@ -234,7 +250,7 @@ export default function AdminPoliticiansPage() {
           </div>
 
           <div className="mt-4 text-sm text-foreground/60">
-            Showing {politicians.length} politician{politicians.length !== 1 ? 's' : ''}
+            Showing {startIndex + 1}-{Math.min(endIndex, politicians.length)} of {politicians.length} politician{politicians.length !== 1 ? 's' : ''}
           </div>
         </CardBody>
       </Card>
@@ -262,7 +278,7 @@ export default function AdminPoliticiansPage() {
                     </td>
                   </tr>
                 ) : (
-                  politicians.map((politician) => (
+                  currentPoliticians.map((politician) => (
                     <tr
                       key={politician.id}
                       className="border-b border-divider hover:bg-default-100 transition-colors cursor-pointer"
@@ -286,6 +302,63 @@ export default function AdminPoliticiansPage() {
           </div>
         </CardBody>
       </Card>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-6">
+          <Button
+            size="sm"
+            variant="flat"
+            isDisabled={currentPage === 1}
+            onPress={() => setCurrentPage(currentPage - 1)}
+          >
+            Previous
+          </Button>
+
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              // Show first page, last page, current page, and pages around current
+              const showPage =
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+
+              // Show ellipsis
+              const showEllipsisBefore = page === currentPage - 2 && currentPage > 3
+              const showEllipsisAfter = page === currentPage + 2 && currentPage < totalPages - 2
+
+              if (!showPage && !showEllipsisBefore && !showEllipsisAfter) {
+                return null
+              }
+
+              if (showEllipsisBefore || showEllipsisAfter) {
+                return <span key={page} className="px-2">...</span>
+              }
+
+              return (
+                <Button
+                  key={page}
+                  size="sm"
+                  variant={currentPage === page ? 'solid' : 'flat'}
+                  color={currentPage === page ? 'primary' : 'default'}
+                  onPress={() => setCurrentPage(page)}
+                >
+                  {page}
+                </Button>
+              )
+            })}
+          </div>
+
+          <Button
+            size="sm"
+            variant="flat"
+            isDisabled={currentPage === totalPages}
+            onPress={() => setCurrentPage(currentPage + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       {/* Add/Edit Modal */}
       <PoliticianModal
