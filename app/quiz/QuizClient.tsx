@@ -41,12 +41,12 @@ export default function QuizClient({ questions }: QuizClientProps) {
 
   const getResultDescription = (party: string) => {
     const descriptions: Record<string, string> = {
-      Progressive: 'Universal Social Programs, Green New Deal',
-      Liberal: 'Public Option Expansion, Democracy Protections',
-      Centrist: 'Market-Focused Social Programs, Bipartisan Solutions',
-      Moderate: 'Limited Government Role, Minimal Social Spending',
-      Conservative: 'Upper Bracket Tax Cuts, National Defense Emphasis',
-      Nationalist: 'Isolationist Economics, Cultural Traditionalism',
+      Progressive: 'Expansive Social Reform, Strong Government Control',
+      Liberal: 'Regulated Markets, Broad Civil Rights',
+      Centrist: 'Bipartisan Approach, Gradual Change',
+      Moderate: 'Fiscal Restraint, Limited Government',
+      Conservative: 'Upper Bracket Tax Cuts, Traditional Values',
+      Nationalist: 'Isolationist Focus, Cultural Preservation',
     }
     return descriptions[party] || ''
   }

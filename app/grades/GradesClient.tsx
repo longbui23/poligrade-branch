@@ -50,6 +50,10 @@ export default function GradesClient({ politicians }: GradesClientProps) {
   const [officeFilter, setOfficeFilter] = useState('All')
   const [gradeFilter, setGradeFilter] = useState('')
 
+  // Sort state - Initialize to match server-side default sort
+  const [sortColumn, setSortColumn] = useState<'name' | 'state' | 'district' | 'office' | 'grade' | null>('name')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 50
@@ -84,9 +88,21 @@ export default function GradesClient({ politicians }: GradesClientProps) {
     }
   }, [searchParams])
 
-  // Filter politicians
+  // Sort function
+  const handleSort = useCallback((column: 'name' | 'state' | 'district' | 'office' | 'grade') => {
+    if (sortColumn === column) {
+      // Toggle direction if same column
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')
+    } else {
+      // New column, default to ascending
+      setSortColumn(column)
+      setSortDirection('asc')
+    }
+  }, [sortColumn])
+
+  // Filter and sort politicians
   const filteredPoliticians = useMemo(() => {
-    return politicians.filter(p => {
+    let filtered = politicians.filter(p => {
       const matchesName = !debouncedNameQuery || p.name.toLowerCase().includes(debouncedNameQuery.toLowerCase())
       const matchesState = !stateFilter || p.state === stateFilter
       const matchesOffice = officeFilter === 'All' || p.office === officeFilter
@@ -94,7 +110,42 @@ export default function GradesClient({ politicians }: GradesClientProps) {
 
       return matchesName && matchesState && matchesOffice && matchesGrade
     })
-  }, [politicians, debouncedNameQuery, stateFilter, officeFilter, gradeFilter])
+
+    // Apply sorting
+    if (sortColumn) {
+      filtered = [...filtered].sort((a, b) => {
+        let aValue: string | number
+        let bValue: string | number
+
+        if (sortColumn === 'district') {
+          // Numerical sorting for district
+          // Handle empty districts (senators) - put them at the end
+          const aDistrict = a.district && a.district !== '—' ? a.district : ''
+          const bDistrict = b.district && b.district !== '—' ? b.district : ''
+
+          if (!aDistrict && !bDistrict) return 0
+          if (!aDistrict) return 1  // Empty districts go to end
+          if (!bDistrict) return -1 // Empty districts go to end
+
+          // Extract number from district string (e.g., "12", "At-Large")
+          const aNum = aDistrict === 'At-Large' ? 999 : parseInt(aDistrict) || 0
+          const bNum = bDistrict === 'At-Large' ? 999 : parseInt(bDistrict) || 0
+          aValue = aNum
+          bValue = bNum
+        } else {
+          // Alphabetical sorting for other columns
+          aValue = a[sortColumn].toLowerCase()
+          bValue = b[sortColumn].toLowerCase()
+        }
+
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+        return 0
+      })
+    }
+
+    return filtered
+  }, [politicians, debouncedNameQuery, stateFilter, officeFilter, gradeFilter, sortColumn, sortDirection])
 
   // Summary counts by grade
   const summaryCounts = useMemo(() => {
@@ -117,6 +168,8 @@ export default function GradesClient({ politicians }: GradesClientProps) {
     setStateFilter('')
     setOfficeFilter('All')
     setGradeFilter('')
+    setSortColumn('name')
+    setSortDirection('asc')
     setCurrentPage(1)
   }, [])
 
@@ -232,6 +285,38 @@ export default function GradesClient({ politicians }: GradesClientProps) {
               </Select>
             </div>
 
+            {/* Sort Dropdown - Mobile Only */}
+            <div className="flex-1 min-w-[200px] md:hidden">
+              <Select
+                placeholder="Sort by"
+                selectedKeys={sortColumn ? [`${sortColumn}-${sortDirection}`] : []}
+                onChange={(e) => {
+                  const value = e.target.value
+                  if (value) {
+                    const [column, direction] = value.split('-') as [typeof sortColumn, 'asc' | 'desc']
+                    setSortColumn(column)
+                    setSortDirection(direction)
+                  }
+                }}
+                aria-label="Sort results"
+                classNames={{ trigger: 'h-12' }}
+                startContent={
+                  <span className="text-xs text-foreground/60 font-medium mr-2">Sort</span>
+                }
+              >
+                <SelectItem key="name-asc" value="name-asc">Name (A-Z)</SelectItem>
+                <SelectItem key="name-desc" value="name-desc">Name (Z-A)</SelectItem>
+                <SelectItem key="state-asc" value="state-asc">State (A-Z)</SelectItem>
+                <SelectItem key="state-desc" value="state-desc">State (Z-A)</SelectItem>
+                <SelectItem key="district-asc" value="district-asc">District (Low-High)</SelectItem>
+                <SelectItem key="district-desc" value="district-desc">District (High-Low)</SelectItem>
+                <SelectItem key="office-asc" value="office-asc">Office (A-Z)</SelectItem>
+                <SelectItem key="office-desc" value="office-desc">Office (Z-A)</SelectItem>
+                <SelectItem key="grade-asc" value="grade-asc">Grade (A-Z)</SelectItem>
+                <SelectItem key="grade-desc" value="grade-desc">Grade (Z-A)</SelectItem>
+              </Select>
+            </div>
+
             <Button
               color="default"
               variant="light"
@@ -260,11 +345,66 @@ export default function GradesClient({ politicians }: GradesClientProps) {
             <table className="w-full">
               <thead className="bg-primary text-white">
                 <tr>
-                  <th className="text-left p-4 font-semibold">Name</th>
-                  <th className="text-left p-4 font-semibold">State</th>
-                  <th className="text-left p-4 font-semibold">District</th>
-                  <th className="text-left p-4 font-semibold">Office</th>
-                  <th className="text-left p-4 font-semibold">Grade</th>
+                  <th className="text-left p-4 font-semibold w-auto">
+                    <button
+                      onClick={() => handleSort('name')}
+                      className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                      aria-label="Sort by name"
+                    >
+                      Name
+                      <span className="text-sm opacity-60" aria-hidden="true">
+                        {sortColumn === 'name' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      </span>
+                    </button>
+                  </th>
+                  <th className="text-left p-4 font-semibold" style={{ width: '180px' }}>
+                    <button
+                      onClick={() => handleSort('state')}
+                      className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                      aria-label="Sort by state"
+                    >
+                      State
+                      <span className="text-sm opacity-60" aria-hidden="true">
+                        {sortColumn === 'state' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      </span>
+                    </button>
+                  </th>
+                  <th className="text-left p-4 font-semibold" style={{ width: '120px' }}>
+                    <button
+                      onClick={() => handleSort('district')}
+                      className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                      aria-label="Sort by district number"
+                    >
+                      District
+                      <span className="text-sm opacity-60" aria-hidden="true">
+                        {sortColumn === 'district' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      </span>
+                    </button>
+                  </th>
+                  <th className="text-left p-4 font-semibold" style={{ width: '220px' }}>
+                    <button
+                      onClick={() => handleSort('office')}
+                      className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                      aria-label="Sort by office"
+                    >
+                      Office
+                      <span className="text-sm opacity-60" aria-hidden="true">
+                        {sortColumn === 'office' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      </span>
+                    </button>
+                  </th>
+                  <th className="text-left p-4 font-semibold" style={{ width: '180px' }}>
+                    <button
+                      onClick={() => handleSort('grade')}
+                      className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                      aria-label="Sort by grade"
+                    >
+                      Grade
+                      <span className="text-sm opacity-60" aria-hidden="true">
+                        {sortColumn === 'grade' ? (sortDirection === 'asc' ? '↑' : '↓') : '⇅'}
+                      </span>
+                    </button>
+                  </th>
                 </tr>
               </thead>
               <tbody>

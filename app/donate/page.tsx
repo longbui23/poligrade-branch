@@ -22,7 +22,7 @@ export default function DonatePage() {
           </Card>
           <Card>
             <CardBody className="text-center p-6">
-              <p className="text-3xl font-bold text-success mb-1">27</p>
+              <p className="text-3xl font-bold text-success mb-1">10</p>
               <p className="text-sm text-foreground/60">Policy Areas</p>
             </CardBody>
           </Card>
