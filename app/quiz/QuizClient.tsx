@@ -20,9 +20,9 @@ export default function QuizClient({ questions }: QuizClientProps) {
   const [totalScore, setTotalScore] = useState(0)
   const [quizStarted, setQuizStarted] = useState(false)
 
-  const handleOptionClick = (option: 'Yes' | 'No') => {
+  const handleOptionClick = (option: 'Support' | 'Oppose') => {
     const current = questions[currentQuestion]
-    if (option === 'Yes') {
+    if (option === 'Support') {
       setTotalScore((prev) => prev - current.point)
     } else {
       setTotalScore((prev) => prev + current.point)
@@ -31,11 +31,11 @@ export default function QuizClient({ questions }: QuizClientProps) {
   }
 
   const getResultLabel = (score: number) => {
-    if (score >= 16) return 'Progressive'
-    if (score >= 4) return 'Liberal'
-    if (score >= -2) return 'Centrist'
-    if (score >= -8) return 'Moderate'
-    if (score >= -17) return 'Conservative'
+    if (score >= 25) return 'Progressive'
+    if (score >= 13) return 'Liberal'
+    if (score >= 0) return 'Centrist'
+    if (score >= -12) return 'Moderate'
+    if (score >= -24) return 'Conservative'
     return 'Nationalist'
   }
 
@@ -62,6 +62,30 @@ export default function QuizClient({ questions }: QuizClientProps) {
               through questions on key policy issues.
             </p>
 
+            <div className="mb-8">
+              <h3 className="text-sm font-semibold text-foreground/80 mb-4">Topics Covered:</h3>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {[
+                  'Economic Policy',
+                  'Business & Labor',
+                  'Health Care',
+                  'Education',
+                  'Environment',
+                  'Civil Rights',
+                  'Voting Rights',
+                  'Immigration & Foreign Affairs',
+                  'Public Safety',
+                ].map((topic) => (
+                  <span
+                    key={topic}
+                    className="inline-block bg-primary/10 text-primary px-3 py-1.5 rounded-full text-sm"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             <Card className="mb-8">
               <CardBody className="p-8">
                 <div className="flex justify-center gap-12 mb-6">
@@ -84,10 +108,6 @@ export default function QuizClient({ questions }: QuizClientProps) {
                 </Button>
               </CardBody>
             </Card>
-
-            <p className="text-sm text-foreground/60">
-              Questions cover Economic Policy, Health Care, Education, Environment, Civil Rights, and more.
-            </p>
         </div>
       </div>
     )
@@ -194,21 +214,21 @@ export default function QuizClient({ questions }: QuizClientProps) {
             <div className="flex flex-col sm:flex-row gap-4 justify-center" role="group" aria-label={`Answer question: ${current.question}`}>
               <Button
                 size="lg"
-                color="success"
+                color="primary"
                 className="font-semibold text-lg min-w-[140px]"
-                onPress={() => handleOptionClick('Yes')}
-                aria-label={`Answer yes to: ${current.question}`}
+                onPress={() => handleOptionClick('Support')}
+                aria-label={`Support: ${current.question}`}
               >
-                Yes
+                Support
               </Button>
               <Button
                 size="lg"
-                variant="flat"
+                variant="bordered"
                 className="font-semibold text-lg min-w-[140px]"
-                onPress={() => handleOptionClick('No')}
-                aria-label={`Answer no to: ${current.question}`}
+                onPress={() => handleOptionClick('Oppose')}
+                aria-label={`Oppose: ${current.question}`}
               >
-                No
+                Oppose
               </Button>
             </div>
           </CardBody>
