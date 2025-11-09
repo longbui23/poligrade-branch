@@ -347,7 +347,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
             <table className="w-full">
               <thead className="bg-primary text-white">
                 <tr>
-                  <th className="text-left p-4 font-semibold w-auto">
+                  <th className="text-left p-4 font-semibold w-auto min-w-[200px]">
                     <button
                       onClick={() => handleSort('name')}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -359,7 +359,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       </span>
                     </button>
                   </th>
-                  <th className="text-left p-4 font-semibold" style={{ width: '220px' }}>
+                  <th className="text-left p-4 font-semibold w-[180px] lg:w-[220px]">
                     <button
                       onClick={() => handleSort('state')}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -371,7 +371,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       </span>
                     </button>
                   </th>
-                  <th className="text-left p-4 font-semibold" style={{ width: '160px' }}>
+                  <th className="text-left p-4 font-semibold w-[120px] lg:w-[160px]">
                     <button
                       onClick={() => handleSort('district')}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -383,7 +383,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       </span>
                     </button>
                   </th>
-                  <th className="text-left p-4 font-semibold" style={{ width: '260px' }}>
+                  <th className="text-left p-4 font-semibold w-[140px] lg:w-[260px]">
                     <button
                       onClick={() => handleSort('office')}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -395,7 +395,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       </span>
                     </button>
                   </th>
-                  <th className="text-left p-4 font-semibold" style={{ width: '220px' }}>
+                  <th className="text-left p-4 font-semibold w-[180px] lg:w-[220px]">
                     <button
                       onClick={() => handleSort('grade')}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
