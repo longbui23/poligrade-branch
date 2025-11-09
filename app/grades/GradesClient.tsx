@@ -383,7 +383,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       </span>
                     </button>
                   </th>
-                  <th className="text-left p-4 font-semibold w-[140px] lg:w-[260px]">
+                  <th className="text-left p-4 font-semibold w-[100px] lg:w-[260px]">
                     <button
                       onClick={() => handleSort('office')}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
