@@ -38,7 +38,12 @@ export default function Home() {
         {/* Background gradient */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute left-1/2 top-0 -translate-x-1/2 transform">
-            <div className="h-[800px] w-[800px] rounded-full bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 dark:from-blue-600/10 dark:via-purple-600/10 dark:to-pink-600/10 blur-3xl" />
+            <div
+              className="h-[800px] w-[800px] rounded-full blur-3xl opacity-20 dark:opacity-10"
+              style={{
+                backgroundImage: 'linear-gradient(to right, #0048ff, #2f90ff, #a1c4ff, #ffb085, #d62828, #7b0001)'
+              }}
+            />
           </div>
         </div>
 
@@ -56,7 +61,12 @@ export default function Home() {
             {/* Headline */}
             <h1 className="mb-6 max-w-4xl text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
               Democracy Powered by{' '}
-              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage: 'linear-gradient(to right, #0048ff 0%, #2f90ff 20%, #a1c4ff 40%, #ffb085 60%, #d62828 80%, #7b0001 100%)'
+                }}
+              >
                 Data, Not Drama
               </span>
             </h1>

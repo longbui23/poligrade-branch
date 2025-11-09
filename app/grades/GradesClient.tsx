@@ -34,7 +34,9 @@ const STATE_MAP: Record<string, string> = {
   'WI': 'Wisconsin', 'WY': 'Wyoming'
 }
 
-const US_STATES = Object.keys(STATE_MAP).sort()
+const US_STATES = Object.keys(STATE_MAP).sort((a, b) =>
+  STATE_MAP[a].localeCompare(STATE_MAP[b])
+)
 
 interface GradesClientProps {
   politicians: Politician[]
@@ -239,9 +241,9 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                   <span className="text-xs text-foreground/60 font-medium mr-2">State</span>
                 }
               >
-                {US_STATES.map(state => (
-                  <SelectItem key={state} value={state}>
-                    {state}
+                {US_STATES.map(stateCode => (
+                  <SelectItem key={stateCode} value={stateCode}>
+                    {STATE_MAP[stateCode]}
                   </SelectItem>
                 ))}
               </Select>
