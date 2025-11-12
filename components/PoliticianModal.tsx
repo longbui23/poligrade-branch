@@ -12,7 +12,7 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react'
-import { US_STATES, OFFICE_OPTIONS, STATUS_OPTIONS, GRADE_OPTIONS } from '@/lib/constants'
+import { US_STATES, STATE_MAP, OFFICE_OPTIONS, STATUS_OPTIONS, GRADE_OPTIONS } from '@/lib/constants'
 import { Politician, PoliticianFormData } from '@/lib/types'
 
 interface PoliticianModalProps {
@@ -121,9 +121,9 @@ export default function PoliticianModal({
                 isRequired
                 classNames={{ trigger: 'h-12' }}
               >
-                {US_STATES.map(state => (
-                  <SelectItem key={state} value={state}>
-                    {state}
+                {US_STATES.map(stateCode => (
+                  <SelectItem key={stateCode} value={stateCode}>
+                    {STATE_MAP[stateCode]}
                   </SelectItem>
                 ))}
               </Select>

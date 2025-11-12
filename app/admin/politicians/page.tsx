@@ -11,7 +11,7 @@ import {
   CardBody,
   Spinner,
 } from '@nextui-org/react'
-import { US_STATES, OFFICE_OPTIONS, STATUS_OPTIONS, GRADE_OPTIONS, formatOffice, formatStatus, formatGrade } from '@/lib/constants'
+import { US_STATES, STATE_MAP, OFFICE_OPTIONS, STATUS_OPTIONS, GRADE_OPTIONS, formatOffice, formatStatus, formatGrade } from '@/lib/constants'
 import PoliticianModal from '@/components/PoliticianModal'
 import DeleteConfirmModal from '@/components/DeleteConfirmModal'
 import { Politician, PoliticianFormData } from '@/lib/types'
@@ -210,9 +210,9 @@ export default function AdminPoliticiansPage() {
                 <span className="text-xs text-foreground/60 font-medium mr-2">State</span>
               }
             >
-              {US_STATES.map(state => (
-                <SelectItem key={state} value={state}>
-                  {state}
+              {US_STATES.map(stateCode => (
+                <SelectItem key={stateCode} value={stateCode}>
+                  {STATE_MAP[stateCode]}
                 </SelectItem>
               ))}
             </Select>
@@ -329,7 +329,7 @@ export default function AdminPoliticiansPage() {
                       onClick={() => handleRowClick(politician)}
                     >
                       <td className="p-4">{politician.name}</td>
-                      <td className="p-4">{politician.state}</td>
+                      <td className="p-4">{STATE_MAP[politician.state] || politician.state}</td>
                       <td className="p-4">{politician.district || '—'}</td>
                       <td className="p-4">{formatOffice(politician.office)}</td>
                       <td className="p-4">{formatStatus(politician.status)}</td>
