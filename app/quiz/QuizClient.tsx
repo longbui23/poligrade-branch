@@ -19,15 +19,29 @@ export default function QuizClient({ questions }: QuizClientProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [totalScore, setTotalScore] = useState(0)
   const [quizStarted, setQuizStarted] = useState(false)
+  const [scoreHistory, setScoreHistory] = useState<number[]>([])
 
   const handleOptionClick = (option: 'Support' | 'Oppose') => {
     const current = questions[currentQuestion]
+    // Save current score to history before updating
+    setScoreHistory((prev) => [...prev, totalScore])
+
     if (option === 'Support') {
       setTotalScore((prev) => prev - current.point)
     } else {
       setTotalScore((prev) => prev + current.point)
     }
     setCurrentQuestion((prev) => prev + 1)
+  }
+
+  const handleBack = () => {
+    if (currentQuestion > 0) {
+      // Restore previous score from history
+      const previousScore = scoreHistory[scoreHistory.length - 1]
+      setTotalScore(previousScore)
+      setScoreHistory((prev) => prev.slice(0, -1))
+      setCurrentQuestion((prev) => prev - 1)
+    }
   }
 
   const getResultLabel = (score: number) => {
@@ -102,7 +116,10 @@ export default function QuizClient({ questions }: QuizClientProps) {
                   size="lg"
                   color="primary"
                   className="font-semibold"
-                  onPress={() => setQuizStarted(true)}
+                  onPress={() => {
+                    setQuizStarted(true)
+                    setScoreHistory([])
+                  }}
                 >
                   Start Quiz
                 </Button>
@@ -152,6 +169,7 @@ export default function QuizClient({ questions }: QuizClientProps) {
                   setCurrentQuestion(0)
                   setTotalScore(0)
                   setQuizStarted(false)
+                  setScoreHistory([])
                 }}
                 aria-label="Retake the alignment quiz"
               >
@@ -211,25 +229,41 @@ export default function QuizClient({ questions }: QuizClientProps) {
               {current.question}
             </h2>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center" role="group" aria-label={`Answer question: ${current.question}`}>
-              <Button
-                size="lg"
-                color="primary"
-                className="font-semibold text-lg min-w-[140px]"
-                onPress={() => handleOptionClick('Support')}
-                aria-label={`Support: ${current.question}`}
-              >
-                Support
-              </Button>
-              <Button
-                size="lg"
-                variant="bordered"
-                className="font-semibold text-lg min-w-[140px]"
-                onPress={() => handleOptionClick('Oppose')}
-                aria-label={`Oppose: ${current.question}`}
-              >
-                Oppose
-              </Button>
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center" role="group" aria-label={`Answer question: ${current.question}`}>
+                <Button
+                  size="lg"
+                  color="primary"
+                  className="font-semibold text-lg min-w-[140px]"
+                  onPress={() => handleOptionClick('Support')}
+                  aria-label={`Support: ${current.question}`}
+                >
+                  Support
+                </Button>
+                <Button
+                  size="lg"
+                  variant="bordered"
+                  className="font-semibold text-lg min-w-[140px]"
+                  onPress={() => handleOptionClick('Oppose')}
+                  aria-label={`Oppose: ${current.question}`}
+                >
+                  Oppose
+                </Button>
+              </div>
+
+              {currentQuestion > 0 && (
+                <div className="flex justify-center">
+                  <Button
+                    size="md"
+                    variant="light"
+                    className="font-medium"
+                    onPress={handleBack}
+                    aria-label="Go back to previous question"
+                  >
+                    ← Back
+                  </Button>
+                </div>
+              )}
             </div>
           </CardBody>
         </Card>
