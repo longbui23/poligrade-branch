@@ -29,7 +29,7 @@ const GRADE_COLORS: Record<string, { bg: string; text: string }> = {
 }
 
 const getGradeColor = (grade: string) =>
-  GRADE_COLORS[grade] || GRADE_COLORS.default;
+  GRADE_COLORS[grade] || GRADE_COLORS.default
 
 interface GradesClientProps {
   politicians: Politician[]
@@ -142,16 +142,18 @@ export default function GradesClient({ politicians }: GradesClientProps) {
     return filtered
   }, [politicians, debouncedNameQuery, stateFilter, officeFilter, gradeFilter, sortColumn, sortDirection])
 
-  // Summary counts by grade
+  // Summary counts by grade (incumbents only)
   const summaryCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     GRADE_OPTIONS.forEach(grade => { counts[grade] = 0 })
 
-    filteredPoliticians.forEach(p => {
-      if (counts[p.grade] !== undefined) {
-        counts[p.grade]++
-      }
-    })
+    filteredPoliticians
+      .filter(p => p.status === 'INCUMBENT')
+      .forEach(p => {
+        if (counts[p.grade] !== undefined) {
+          counts[p.grade]++
+        }
+      })
 
     return counts
   }, [filteredPoliticians])
@@ -194,18 +196,19 @@ export default function GradesClient({ politicians }: GradesClientProps) {
       {/* Bar Chart */}
       <div className="mb-8">
         <Card className="p-6 shadow-xl">
-          <div className="flex justify-between items-end h-64 space-x-4 pt-10"
-          role="img"
-          aria-label={`Bar chart showing politician counts: ${GRADE_OPTIONS.map(g => `${g}: ${summaryCounts[g]}`).join(', ')}`}
+          <div
+            className="flex justify-between items-end h-64 space-x-4 pt-10"
+            role="img"
+            aria-label={`Bar chart showing politician counts: ${GRADE_OPTIONS.map(g => `${g}: ${summaryCounts[g]}`).join(', ')}`}
           >
             {(() => {
-              const counts = Object.values(summaryCounts);
-              const maxCount = counts.length > 0 ? Math.max(...counts) : 1;
+              const counts = Object.values(summaryCounts)
+              const maxCount = counts.length > 0 ? Math.max(...counts) : 1
 
               return GRADE_OPTIONS.map((grade) => {
-                const count = summaryCounts[grade] || 0;
-                const { bg, text } = getGradeColor(grade);
-                const height = Math.max(5, (count / maxCount) * 100);
+                const count = summaryCounts[grade] || 0
+                const { bg, text } = getGradeColor(grade)
+                const height = Math.max(5, (count / maxCount) * 100)
 
                 return (
                   <div key={grade} className="flex flex-col items-center justify-end h-full flex-1 min-w-[45px]">
@@ -222,10 +225,9 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       {grade}
                     </div>
                   </div>
-                );
-              });
+                )
+              })
             })()}
-
           </div>
         </Card>
       </div>
