@@ -148,7 +148,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
     GRADE_OPTIONS.forEach(grade => { counts[grade] = 0 })
 
     filteredPoliticians
-      .filter(p => p.status === 'INCUMBENT')
+      .filter(p => p.status === 'Incumbent')
       .forEach(p => {
         if (counts[p.grade] !== undefined) {
           counts[p.grade]++
