@@ -187,10 +187,7 @@ export default function PoliticianModal({
                   <Button
                     color="danger"
                     variant="flat"
-                    onPress={() => {
-                      onDelete()
-                      onClose()
-                    }}
+                    onPress={onDelete}
                     isDisabled={saving}
                   >
                     Delete
