@@ -390,7 +390,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       </span>
                     </button>
                   </th>
-                  <th className="text-left p-4 font-semibold w-[100px] lg:w-[260px]">
+                  <th className="text-left p-4 font-semibold w-[100px] lg:w-[200px]">
                     <button
                       onClick={() => handleSort('office')}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -402,7 +402,10 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       </span>
                     </button>
                   </th>
-                  <th className="text-left p-4 font-semibold w-[180px] lg:w-[220px]">
+                  <th className="text-left p-4 font-semibold w-[120px]">
+                    Status
+                  </th>
+                  <th className="text-left p-4 font-semibold w-[150px] lg:w-[180px]">
                     <button
                       onClick={() => handleSort('grade')}
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -419,7 +422,7 @@ export default function GradesClient({ politicians }: GradesClientProps) {
               <tbody>
                 {filteredPoliticians.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center p-8">
+                    <td colSpan={6} className="text-center p-8">
                       <div className="flex flex-col items-center gap-3">
                         <p className="text-foreground/80 font-medium">No politicians found matching your filters</p>
                         <Button
@@ -441,12 +444,8 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       <td className="p-4">{politician.name}</td>
                       <td className="p-4">{STATE_MAP[politician.state] || politician.state}</td>
                       <td className="p-4">{politician.district || '—'}</td>
-                      <td className="p-4">
-                        {politician.office}
-                        {politician.status && politician.status !== 'None' && (
-                          <span className="text-foreground/60"> ({politician.status})</span>
-                        )}
-                      </td>
+                      <td className="p-4">{politician.office}</td>
+                      <td className="p-4">{politician.status !== 'None' ? politician.status : '—'}</td>
                       <td className="p-4">
                         <span
                           className="inline-block px-3 py-1 rounded-full text-sm font-semibold"
@@ -499,14 +498,13 @@ export default function GradesClient({ politicians }: GradesClientProps) {
                       </div>
                       <div>
                         <span className="text-xs font-semibold text-foreground/60 block mb-1">Office</span>
-                        <span className="font-medium">
-                          {politician.office}
-                          {politician.status && politician.status !== 'None' && (
-                            <span className="text-foreground/60"> ({politician.status})</span>
-                          )}
-                        </span>
+                        <span className="font-medium">{politician.office}</span>
                       </div>
                       <div>
+                        <span className="text-xs font-semibold text-foreground/60 block mb-1">Status</span>
+                        <span className="font-medium">{politician.status !== 'None' ? politician.status : '—'}</span>
+                      </div>
+                      <div className="col-span-2">
                         <span className="text-xs font-semibold text-foreground/60 block mb-1">Grade</span>
                         <span
                           className="inline-block px-3 py-1 rounded-full text-sm font-semibold"
