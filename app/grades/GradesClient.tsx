@@ -183,8 +183,9 @@ export default function GradesClient({ politicians }: GradesClientProps) {
       {/* Bar Chart */}
       <div className="mb-8">
         <Card className="p-6 shadow-xl">
+          {/* Desktop: Vertical bars */}
           <div
-            className="flex justify-between items-end h-64 space-x-4 pt-10"
+            className="hidden md:flex justify-between items-end h-64 space-x-4 pt-10"
             role="img"
             aria-label={`Bar chart showing politician counts: ${GRADE_OPTIONS.map(g => `${g}: ${summaryCounts[g]}`).join(', ')}`}
           >
@@ -210,6 +211,41 @@ export default function GradesClient({ politicians }: GradesClientProps) {
 
                     <div className="text-sm text-center pt-2 text-foreground/80">
                       {grade}
+                    </div>
+                  </div>
+                )
+              })
+            })()}
+          </div>
+
+          {/* Mobile: Horizontal bars */}
+          <div
+            className="md:hidden flex flex-col space-y-3"
+            role="img"
+            aria-label={`Bar chart showing politician counts: ${GRADE_OPTIONS.map(g => `${g}: ${summaryCounts[g]}`).join(', ')}`}
+          >
+            {(() => {
+              const counts = Object.values(summaryCounts)
+              const maxCount = counts.length > 0 ? Math.max(...counts) : 1
+
+              return GRADE_OPTIONS.map((grade) => {
+                const count = summaryCounts[grade] || 0
+                const { bg, text } = getGradeColor(grade)
+                const width = Math.max(5, (count / maxCount) * 100)
+
+                return (
+                  <div key={grade} className="flex items-center gap-3">
+                    <div className="w-24 text-sm font-medium text-right" style={{ color: text }}>
+                      {grade}
+                    </div>
+                    <div className="flex-1 h-8 bg-default-100 rounded-lg overflow-hidden">
+                      <div
+                        className="h-full rounded-lg shadow-md transition-all duration-700 ease-out"
+                        style={{ width: `${width}%`, backgroundColor: bg }}
+                      />
+                    </div>
+                    <div className="w-8 text-sm font-bold" style={{ color: text }}>
+                      {count}
                     </div>
                   </div>
                 )
